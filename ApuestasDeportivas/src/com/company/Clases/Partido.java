@@ -45,6 +45,14 @@ public class Partido {
         this.limiteAlcanzadoTipo3 = limiteAlcanzadoTipo3;
     }
 
+    public Partido(String competicion, int golesLocal, int golesVisitante, Timestamp fechaInicio, Timestamp fechaFin) {
+        this.competicion = competicion;
+        this.golLocal = golesLocal;
+        this.golVisitante = golesVisitante;
+        this.fechaInicio = fechaInicio.toLocalDateTime();
+        this.fechaFin = fechaFin.toLocalDateTime();
+    }
+
     /*
     public UUID getId() {
         return id;

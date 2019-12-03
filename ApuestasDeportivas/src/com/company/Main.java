@@ -68,6 +68,8 @@ public class Main {
         String correo = "";
         int opcionMenu = 0;
         int opcionSubMenu = 0;
+        String usuario = "";
+        String contrasenha = "";
 
         Scanner teclado = new Scanner(System.in);
         Connection conexion = null;
@@ -87,7 +89,43 @@ public class Main {
         Partido partido = new Partido();
 
         //Login
+        do {
+            System.out.println("Introduce el usuario");
+            usuario = teclado.next();
+            System.out.println("Introduce la contrasenha");
+            contrasenha = teclado.next();
+            jdbc.crearConexion(usuario, contrasenha);
+        }
+        while(conexion == null);
 
+        if(utd.Login(usuario, contrasenha)) {
+            //Meter menu administrador y usuario
+            opcionMenu = utd.leerYValidarOpcionMenuLogin();
+            switch (opcionMenu) {
+                case 1:
+                    //Menu usuario
+                    opcionSubMenu = utd.leerYValidarOpcionMenuUsuario();
+                    switch (opcionSubMenu) {
+                        case 1:
+                            //Apuestas realizadas (Metodo Rafa)
+
+                        break;
+
+                        case 2:
+
+                        break;
+                    }
+
+                break;
+
+                case 2:
+                    //Menu administrador
+                    break;
+            }
+        }
+        else {
+            //Meter solo menu usuario
+        }
         opcionMenu = utd.leerYValidarOpcionMenuUsuario();
         while (opcionMenu != 0) {
             //Hay que rediseñar con el nuevo pseudocodigo
@@ -147,6 +185,8 @@ public class Main {
                                 }
 
                             break;
+
+
                             case 3:
                                 System.out.println("Introduce un correo: ");
                                 correo = teclado.next();
