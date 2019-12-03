@@ -102,6 +102,7 @@
       <workItem from="1574855250052" duration="1978000" />
       <workItem from="1575016004974" duration="1252000" />
       <workItem from="1575017405663" duration="15000" />
+      <workItem from="1575365300638" duration="2316000" />
     </task>
     <servers />
   </component>
@@ -110,7 +111,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/com/company/Gestionadoras/JDBC.java</url>
-          <line>112</line>
+          <line>122</line>
           <option name="timeStamp" value="3" />
         </line-breakpoint>
       </breakpoints>

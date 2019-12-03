@@ -12,11 +12,21 @@ import java.util.UUID;
 
 public class JDBC {
 
-    public Connection crearConexion(String usuario,String constrasena){
+    /*
+     Cabecera
+     Precondiciones: No hay
+     Entradas:
+        -String usuario
+        -String contrasena
+     Salidas: Connection conexion
+     Postcondiciones: Devuelve la conexion asociada al nombre
+     */
+
+    public Connection crearConexion(String usuario,String contrasena){
         String sourceURL = "jdbc:sqlserver://localhost;DatabaseName=CasaDeApuestas";
         Connection conexion = null;
         try {
-            conexion = DriverManager.getConnection(sourceURL, usuario, constrasena);
+            conexion = DriverManager.getConnection(sourceURL, usuario, contrasena);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -214,13 +224,21 @@ public class JDBC {
         return filas;
     }
 
-    public boolean consultarPartido(Connection conexion,String idPartido){
+    public ArrayList<FullTipoApuesta> consultarPartido(Connection conexion,String idPartido){
         CallableStatement cstmt = null;
         boolean execute = false;
+        ResultSet datos;
+        FullTipoApuesta fullTipoApuestas;
+        ArrayList<FullTipoApuesta> lista = new ArrayList<FullTipoApuesta>();
         try {
             cstmt = conexion.prepareCall("{ call consultarPartido(?)}");
             cstmt.setString(1, idPartido);
-            execute = cstmt.execute();
+            datos = cstmt.executeQuery();
+
+            while(datos.next()) {
+                fullTipoApuestas = new FullTipoApuesta(datos.getString("Tipo").charAt(0), datos.getInt("GolesLocal"),datos.getInt("GolesVisitante") ,datos.getString("LocalOVisitante").charAt(0),datos.getInt("Goles"),datos.getString("unoxDos").charAt(0),datos.getInt("TotalApostado"));
+                lista.add(fullTipoApuestas);
+            }
         }catch (SQLException e) {
             System.out.println("No se pudo consultar el partido");
         }finally {
@@ -230,6 +248,6 @@ public class JDBC {
                 e.printStackTrace();
             }
         }
-        return execute;
+        return lista;
     }
 }
