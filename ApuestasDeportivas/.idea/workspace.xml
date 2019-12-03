@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="9a9351eb-bf73-4f8d-8dbb-3b537a659974" name="Default Changelist" comment="" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/src/com/company/Main.java" root0="SKIP_INSPECTION" />
+  </component>
+  <component name="ProjectId" id="1TBtn6xbIn0wePOftIAgKIqpVIw" />
+  <component name="PropertiesComponent">
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="project.structure.last.edited" value="Libraries" />
+    <property name="project.structure.proportion" value="0.15" />
+    <property name="project.structure.side.proportion" value="0.2" />
+    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\vmperez\IdeaProjects\ApuestasDeportivas\src\com\company\Clases Abstractas" />
+      <recent name="C:\Users\vmperez\IdeaProjects\ApuestasDeportivas\src\com\company\Clases" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\vmperez\IdeaProjects\ApuestasDeportivas\src\com\company\Clases" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager" selected="Application.Main">
+    <configuration name="ConductoresJDBC" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.company.Conductores.ConductoresJDBC" />
+      <module name="ApuestasDeportivas" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.company.Utilidades.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Main" type="Application" factoryName="Application" temporary="true">
+      <option name="MAIN_CLASS_NAME" value="com.company.Main" />
+      <module name="ApuestasDeportivas" />
+      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.Main" />
+        <item itemvalue="Application.ConductoresJDBC" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="9a9351eb-bf73-4f8d-8dbb-3b537a659974" name="Default Changelist" comment="" />
+      <created>1572945480467</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1572945480467</updated>
+      <workItem from="1572945559174" duration="2798000" />
+      <workItem from="1573041296967" duration="2977000" />
+      <workItem from="1573201699497" duration="2352000" />
+      <workItem from="1573464689067" duration="2811000" />
+      <workItem from="1573546742036" duration="4496000" />
+      <workItem from="1573646423136" duration="2593000" />
+      <workItem from="1574069290324" duration="2671000" />
+      <workItem from="1574151619649" duration="5186000" />
+      <workItem from="1574253268599" duration="565000" />
+      <workItem from="1574674377964" duration="2360000" />
+      <workItem from="1574676809083" duration="8000" />
+      <workItem from="1574753609153" duration="3413000" />
+      <workItem from="1574758376733" duration="4797000" />
+      <workItem from="1574855250052" duration="1978000" />
+      <workItem from="1575016004974" duration="1252000" />
+      <workItem from="1575017405663" duration="15000" />
+    </task>
+    <servers />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/com/company/Gestionadoras/JDBC.java</url>
+          <line>112</line>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>
