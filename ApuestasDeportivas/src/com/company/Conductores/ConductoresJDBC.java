@@ -16,7 +16,7 @@ public class ConductoresJDBC {
         Connection conexion = null;
         GregorianCalendar fechaInicio =  new GregorianCalendar(2019,5,12,21,30,25);
         GregorianCalendar fechaFin =  new GregorianCalendar(2019,6,12,21,30,25);
-        conexion = jdbc.crearConexion();
+        conexion = jdbc.crearConexion("victor", "victor");
         ArrayList<Movimiento> movimientosCuenta = new ArrayList<Movimiento>();
 
         movimientosCuenta = jdbc.movimientosCuenta(conexion,"test@test.test");
