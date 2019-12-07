@@ -5,6 +5,7 @@ import com.company.Clases.Movimiento;
 import com.company.Clases.Partido;
 import com.company.Gestionadoras.JDBC;
 import com.company.Utilidades.Utilidades;
+import com.sun.java.swing.plaf.windows.TMSchema;
 
 import java.sql.Connection;
 import java.util.ArrayList;
@@ -51,7 +52,7 @@ Fin
 PG Cuenta
 Inicio
     Repetir
-        RetirarIngreso
+        IngresarDinero
         RetirarDinero
         MovimientosCuenta
     Mientras no sea salir
@@ -84,6 +85,7 @@ public class Main {
         ArrayList<Apuesta> apuestasRealizadas = new ArrayList<Apuesta>();
         ArrayList<Movimiento> movimientosCuenta= new ArrayList<Movimiento>();
         ArrayList<Apuesta> apuestasGanadas = new ArrayList<Apuesta>();
+        ArrayList<Partido> partidos = new ArrayList<>();
         int filas = 0;
 
         Partido partido = new Partido();
@@ -112,20 +114,118 @@ public class Main {
                         break;
 
                         case 2:
-
+                            //VerPartidosDisponibles
+                            conexion = jdbc.crearConexion(usuario, contrasenha);
+                            partidos = jdbc.partidosAbiertos(conexion);
+                            //partidos.stream().forEach(a -> a.getCompeticion() + " " + );
                         break;
+
+                        case 3:
+                            //ComprobarApuestaAnterior (Metodo Rafa)
+                            conexion = jdbc.crearConexion(usuario, contrasenha);
+                            break;
+
+                        case 4:
+                            //Cuenta
+                            do {
+                                opcionSubMenu = utd.leerYValidarOpcionSubMenuCuenta();
+
+                                switch (opcionSubMenu) {
+                                    case 1: //Ingresar Dinero
+                                        cantidad = utd.leerYValidarCantidad();
+                                        System.out.println("Introduce un correo: ");
+                                        correo = teclado.next();
+
+                                        conexion = jdbc.crearConexion();
+                                        execute = jdbc.ingresarDinero(conexion, cantidad, correo);
+
+                                        if(execute){
+                                            System.out.println("Se ha ingresado correctamente");
+                                        }
+                                        break;
+
+                                    case 2:
+                                        //RetirarDinero
+                                        cantidad = utd.leerYValidarCantidad();
+                                        System.out.println("Introduce un correo: ");
+                                        correo = teclado.next();
+
+                                        conexion = jdbc.crearConexion(usuario, contrasenha);
+                                        execute = jdbc.retirarDinero(conexion, cantidad, correo);
+
+                                        if(execute){
+                                            System.out.println("Se ha retirado correctamente");
+                                        }
+                                        break;
+
+                                    case 3:
+                                        //MovimientosCuenta
+                                        System.out.println("Introduce un correo: ");
+                                        correo = teclado.next();
+
+                                        conexion = jdbc.crearConexion(usuario, contrasenha);
+                                        movimientosCuenta = jdbc.movimientosCuenta(conexion,correo);
+
+                                        for(int i = 0; i < movimientosCuenta.size(); i++) {
+                                            System.out.println(movimientosCuenta.get(i).getId() + " �" + " -> " + movimientosCuenta.get(i).getCantidad()
+                                                    + " -> " + movimientosCuenta.get(i).getCorreoUsuario() + " -> " + movimientosCuenta.get(i).getTipo());
+                                        }
+                                        break;
+
+                                }
+                                opcionSubMenu = utd.leerYValidarOpcionMenuAdministrador();
+                            }
+                            while (opcionSubMenu == 0);
+
+                            break;
+
                     }
 
                 break;
 
                 case 2:
                     //Menu administrador
+                    do {
+                        opcionSubMenu = utd.leerYValidarOpcionMenuAdministrador();
+
+                        switch (opcionSubMenu) {
+                            case 1:
+                                //CrearPartido
+                                partido = utd.crearPartido();
+                                conexion = jdbc.crearConexion(usuario, contrasenha);
+                                filas = jdbc.crearPartidoBBDD(conexion,partido);
+                                if(filas > 0){
+                                    System.out.println("Se ha creado el partido correctamente");
+                                }
+                                break;
+
+                            case 2:
+                                //AbrirPartido
+                                break;
+
+                            case 3:
+                                //CerrarPartido
+                                break;
+
+                            case 4:
+                                //ApuestasPartido
+                                break;
+
+                            case 5:
+                                //PagarApuestas
+                                break;
+                        }
+                        opcionSubMenu = utd.leerYValidarOpcionMenuAdministrador();
+                    }
+                    while (opcionSubMenu == 0);
+
                     break;
             }
         }
         else {
             //Meter solo menu usuario
         }
+        /*
         opcionMenu = utd.leerYValidarOpcionMenuUsuario();
         while (opcionMenu != 0) {
             //Hay que rediseñar con el nuevo pseudocodigo
@@ -142,7 +242,8 @@ public class Main {
                         System.out.println("Se ha ingresado correctamente");
                     }
                 break;
-
+*/
+        /*
                 case 2: //Retirar Dinero
                     cantidad = utd.leerYValidarCantidad();
                     System.out.println("Introduce un correo: ");
@@ -171,7 +272,7 @@ public class Main {
                                     System.out.println(movimientosCuenta.get(i).getId() + " �" + " -> " + movimientosCuenta.get(i).getCantidad()
                                             + " -> " + movimientosCuenta.get(i).getCorreoUsuario() + " -> " + movimientosCuenta.get(i).getTipo());
                                 }
-                            break;
+                            break;*/
                             case 2:
                                 System.out.println("Introduce un correo: ");
                                 correo = teclado.next();
@@ -204,6 +305,7 @@ public class Main {
                     }
                 break;
 
+/*
                 case 4:
                     partido = utd.crearPartido();
                     conexion = jdbc.crearConexion();
@@ -214,6 +316,6 @@ public class Main {
                 break;
             }
             opcionMenu = utd.leerYValidarOpcionMenuUsuario();
-        }
+        }*/
     }
 }
