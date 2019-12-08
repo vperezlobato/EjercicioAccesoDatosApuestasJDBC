@@ -5,7 +5,6 @@ import com.company.Clases.Movimiento;
 import com.company.Clases.Partido;
 import com.company.Gestionadoras.JDBC;
 import com.company.Utilidades.Utilidades;
-import com.sun.java.swing.plaf.windows.TMSchema;
 
 import java.sql.Connection;
 import java.util.ArrayList;
@@ -102,7 +101,7 @@ public class Main {
 
         if(utd.Login(usuario, contrasenha)) {
             //Meter menu administrador y usuario
-            opcionMenu = utd.leerYValidarOpcionMenuLogin();
+            opcionMenu = utd.leerYValidarOpcionMenuLoginConUsuario();
             switch (opcionMenu) {
                 case 1:
                     //Menu usuario
@@ -136,7 +135,7 @@ public class Main {
                                         System.out.println("Introduce un correo: ");
                                         correo = teclado.next();
 
-                                        conexion = jdbc.crearConexion();
+                                        conexion = jdbc.crearConexion(usuario, contrasenha);
                                         execute = jdbc.ingresarDinero(conexion, cantidad, correo);
 
                                         if(execute){
@@ -273,6 +272,7 @@ public class Main {
                                             + " -> " + movimientosCuenta.get(i).getCorreoUsuario() + " -> " + movimientosCuenta.get(i).getTipo());
                                 }
                             break;*/
+        /*
                             case 2:
                                 System.out.println("Introduce un correo: ");
                                 correo = teclado.next();

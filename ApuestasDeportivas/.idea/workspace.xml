@@ -48,7 +48,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.Main">
+  <component name="RunManager" selected="Application.PruebaMain">
     <configuration name="ConductoresJDBC" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.company.Conductores.ConductoresJDBC" />
       <module name="ApuestasDeportivas" />
@@ -72,8 +72,16 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="PruebaMain" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.company.PruebaMain" />
+      <module name="ApuestasDeportivas" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.PruebaMain" />
         <item itemvalue="Application.Main" />
         <item itemvalue="Application.ConductoresJDBC" />
       </list>

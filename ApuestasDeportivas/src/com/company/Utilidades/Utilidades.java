@@ -25,7 +25,7 @@ public class Utilidades {
     }
 
     //Cuando se loguee para despues del login
-    public int leerYValidarOpcionMenuLogin(){
+    public int leerYValidarOpcionMenuLoginConAdministrador(){
         int opcion = 0;
         Scanner teclado = new Scanner(System.in);
         do{
@@ -40,6 +40,21 @@ public class Utilidades {
         return opcion;
     }
 
+    //Cuando se loguee para despues del login
+    public int leerYValidarOpcionMenuLoginConUsuario(){
+        int opcion = 0;
+        Scanner teclado = new Scanner(System.in);
+        do{
+            System.out.println("Escoge una de las siguientes opciones: ");
+            System.out.println("0. Para salir del menu ");
+            System.out.println("1 Menu Usuario");
+
+            opcion = teclado.nextInt();
+        }while (opcion < 0 || opcion > 1);
+
+        return opcion;
+    }
+
     //Con esto seria menu usuario
     public int leerYValidarOpcionMenuUsuario(){
         int opcionMenu = 0;
@@ -50,7 +65,7 @@ public class Utilidades {
             System.out.println("1 Realizar Apuesta ");
             System.out.println("2 Ver Partidos Disponibles ");
             System.out.println("3 Comprobar Apuesta Anterior ");
-            System.out.println("4 Crear un partido");
+            System.out.println("4 Cuenta");
 
             opcionMenu = teclado.nextInt();
         }while (opcionMenu < 0 || opcionMenu > 4);
@@ -65,7 +80,7 @@ public class Utilidades {
         do{
             System.out.println("Escoge una de las siguientes opciones: ");
             System.out.println("0 Para salir del submenu ");
-            System.out.println("1 Realizar Dinero ");
+            System.out.println("1 Ingresar Dinero ");
             System.out.println("2 Retirar Dinero ");
             System.out.println("3 Movimientos de la cuenta ");
 
