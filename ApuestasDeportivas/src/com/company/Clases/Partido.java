@@ -6,7 +6,7 @@ import java.util.GregorianCalendar;
 import java.util.UUID;
 
 public class Partido {
-    //private UUID id;
+    private UUID id;
     private String competicion;
     private int golLocal;
     private int golVisitante;
@@ -20,6 +20,8 @@ public class Partido {
     public Partido() {
 
     }
+
+
 
     public Partido(String competicion, int golLocal, int golVisitante, Timestamp fechaInicio, Timestamp fechaFin,boolean estaAbierto,double limiteAlcanzadoTipo1,double limiteAlcanzadoTipo2,double limiteAlcanzadoTipo3) {
         this.competicion = competicion;
@@ -53,7 +55,7 @@ public class Partido {
         this.fechaFin = fechaFin.toLocalDateTime();
     }
 
-    /*
+
     public UUID getId() {
         return id;
     }
@@ -61,7 +63,7 @@ public class Partido {
     public void setId(UUID id) {
         this.id = id;
     }
-    */
+
     public String getCompeticion() {
         return competicion;
     }
