@@ -10,7 +10,9 @@ import java.util.UUID;
 public class JDBC {
 
     /*
-     Cabecera
+     Nombre: crearConexion
+     Comentario: Con este metodo se crea la conexion con la base de datos
+     Cabecera: public Connection crearConexion(String usuario,String contrasena)
      Precondiciones: No hay
      Entradas:
         -String usuario
@@ -31,6 +33,20 @@ public class JDBC {
         return conexion;
     }
 
+
+    /*
+     Nombre: ingresarDinero
+     Comentario: Con este metodo se ingresara en la base de datos la cantidad de dinero indicada, en el usuario con ese correo.
+     Cabecera: public boolean ingresarDinero(Connection conexion,double cantidad,String correo)
+     Precondiciones:
+        -Cantidad debe ser mayor que 0
+     Entradas:
+        -Connection conexion
+        -double cantidad
+        -String correo
+     Salidas: boolean execute
+     Postcondiciones: Devuelve si se ha ingresado true, false en caso contrario asociado al nombre.
+     */
     public boolean ingresarDinero(Connection conexion,double cantidad,String correo){
         CallableStatement cstmt = null;
         boolean execute = false;
@@ -51,6 +67,20 @@ public class JDBC {
         return execute;
     }
 
+
+    /*
+     Nombre: retirarDinero
+     Comentario: Con este metodo se retirara en la base de datos la cantidad de dinero indicada, en el usuario con ese correo.
+     Cabecera: public boolean retirarDinero(Connection conexion,double cantidad,String correo)
+     Precondiciones:
+        -Cantidad debe ser mayor que 0
+     Entradas:
+        -Connection conexion
+        -double cantidad
+        -String correo
+     Salidas: boolean execute
+     Postcondiciones: Devuelve si se ha ingresado true, false en caso contrario asociado al nombre.
+     */
     public boolean retirarDinero(Connection conexion,double cantidad,String correo){
         CallableStatement cstmt = null;
         boolean execute = false;
@@ -71,24 +101,48 @@ public class JDBC {
         return execute;
     }
 
-
-    public ArrayList<Movimiento> movimientosCuenta(Connection conexion, String correo){
+    /*
+     Nombre: movimientosCuenta
+     Comentario: Con este metodo se visualizaran las apuestas ganadas y las apuestas realizadas de un usuario en concreto.
+     Cabecera: public movimientosCuenta movimientosCuenta(Connection conexion, String correo)
+     Precondiciones: --
+     Entradas:
+        -Connection conexion
+        -String correo
+     Salidas: movimientosCuenta movimientos
+     Postcondiciones: Devuelve asociado al nombre, un movimientosCuenta con el correo del usuario, la apuestas realizadas, y las apuestas ganadas.
+     */
+    public movimientosCuenta movimientosCuenta(Connection conexion, String correo){
         PreparedStatement sentencia = null;
         String miOrden = "";
         ResultSet datos = null;
-        Movimiento movimiento = new Movimiento();
-        ArrayList<Movimiento> movimientos= new ArrayList<Movimiento>();
+        movimientosCuenta movimientoCuenta = new movimientosCuenta();
 
         try {
-            miOrden = "Select * From Movimientos Where correoUsuario = ?";
+            miOrden = " Select M.correoUsuario,P.[Numero de apuestas],D.[Numero de apuestas ganadas] from Movimientos AS M " +
+                    " INNER JOIN " +
+                    " (Select COUNT(ID) as [Numero de apuestas],CorreoUsuario From Apuestas Where correoUsuario = ? group by CorreoUsuario) AS P " +
+                    " ON M.correoUsuario = P.CorreoUsuario " +
+                    " INNER JOIN " +
+                    " (Select COUNT(A.ID) as [Numero de apuestas ganadas],A.CorreoUsuario From Apuestas AS A " +
+                    "                    LEFT JOIN ApuestasTipo1 AS AT1 ON A.ID = AT1.IDApuesta " +
+                    "                    INNER JOIN Partidos AS P ON P.ID = A.IDPartido " +
+                    "                    LEFT JOIN ApuestasTipo2 AS AT2 ON AT2.IDApuesta = A.ID " +
+                    "                    LEFT JOIN ApuestasTipo3 AS AT3 ON AT3.IDApuesta = A.ID " +
+                    "                    WHERE ((AT1.GolesLocal = P.golesLocal AND AT1.GolesVisitante = P.golesVisitante) " +
+                    "                    OR (AT2.LocalOVisitante = 'L' AND AT2.Goles = P.golesLocal ) " +
+                    "                    OR (AT3.[1X2] = '1' AND P.golesLocal > P.golesVisitante) OR (AT3.[1X2] = '2' AND P.golesLocal < P.golesVisitante) OR (AT3.[1X2] = 'X' AND P.golesLocal = P.golesVisitante)) " +
+                    "                    AND A.CorreoUsuario = ?" +
+                    " group by A.CorreoUsuario) AS D " +
+                    " ON D.CorreoUsuario = M.correoUsuario " +
+                    " group by M.correoUsuario,P.[Numero de apuestas],D.[Numero de apuestas ganadas] ";
             sentencia = conexion.prepareStatement(miOrden);
             sentencia.setString(1, correo);
+            sentencia.setString(2, correo);
             datos = sentencia.executeQuery();
 
-            while(datos.next()) {
-                movimiento = new Movimiento(new UUID(0,0).fromString( datos.getString("ID")), datos.getString("correoUsuario"), datos.getDouble("cantidad"), datos.getString("tipo"));
-                movimientos.add(movimiento);
-            }
+            movimientoCuenta = new movimientosCuenta(datos.getString("correoUsuario"), datos.getInt("Numero de apuestas"), datos.getInt("Numero de apuestas ganadas"));
+
         } catch (SQLException e) {
             e.printStackTrace();
         }finally {
@@ -99,103 +153,20 @@ public class JDBC {
             }
         }
 
-        return movimientos;
+        return movimientoCuenta;
     }
 
-    public ArrayList<Apuesta> apuestasRealizadas(Connection conexion, String correo){
-        PreparedStatement sentencia = null;
-        String miOrden = "";
-        ResultSet datos = null;
-        Apuesta apuesta = null;
-        ArrayList<Apuesta> apuestas = new ArrayList<Apuesta>();
-
-        try{
-            miOrden = "Select ID,cantidad,Tipo From Apuestas Where correoUsuario = ?";
-            sentencia = conexion.prepareStatement(miOrden);
-            sentencia.setString(1,correo);
-            datos = sentencia.executeQuery();
-
-            while(datos.next()){
-                if(datos.getString("Tipo").equals("1")){
-                    apuesta = new ApuestaTipo1(new UUID(0,0).fromString(datos.getString("ID")),datos.getDouble("cantidad"),
-                            datos.getString("Tipo").charAt(0));
-                }else
-                    if(datos.getString("Tipo").equals("2")){
-                        apuesta = new ApuestaTipo2(new UUID(0,0).fromString(datos.getString("ID")),datos.getDouble("cantidad"),
-                                datos.getString("Tipo").charAt(0));
-                    }else
-                        if(datos.getString("Tipo").equals("3")){
-                            apuesta = new ApuestaTipo3(new UUID(0,0).fromString(datos.getString("ID")),datos.getDouble("cantidad"),
-                                    datos.getString("Tipo").charAt(0));
-                        }
-                apuestas.add(apuesta);
-            }
-        }catch (SQLException e){
-            e.printStackTrace();
-        }finally {
-            try {
-                conexion.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-
-        return apuestas;
-    }
-
-    public ArrayList<Apuesta> apuestasGanadas(Connection conexion, String correo){
-        PreparedStatement sentencia = null;
-        String miOrden = "";
-        ResultSet datos = null;
-        ArrayList<Apuesta> apuestas = new ArrayList<Apuesta>();
-        Apuesta apuesta = null;
-
-        try{
-            miOrden = "Select A.ID,A.cantidad,A.cuota,A.IDPartido,A.CorreoUsuario,A.Tipo From Apuestas AS A " +
-                    "LEFT JOIN ApuestasTipo1 AS AT1 ON A.ID = AT1.IDApuesta " +
-                    "INNER JOIN Partidos AS P ON P.ID = A.IDPartido " +
-                    "LEFT JOIN ApuestasTipo2 AS AT2 ON AT2.IDApuesta = A.ID  " +
-                    "LEFT JOIN ApuestasTipo3 AS AT3 ON AT3.IDApuesta = A.ID " +
-                    "WHERE (AT1.GolesLocal = P.golesLocal AND AT1.GolesVisitante = P.golesVisitante) " +
-                    "OR (AT2.LocalOVisitante = 'L' AND AT2.Goles = P.golesLocal )   " +
-                    "OR (AT3.[1X2] = '1' AND P.golesLocal > P.golesVisitante) OR (AT3.[1X2] = '2' AND P.golesLocal < P.golesVisitante) OR (AT3.[1X2] = 'X' AND P.golesLocal = P.golesVisitante) " +
-                    "AND correoUsuario = ?";
-            sentencia = conexion.prepareStatement(miOrden);
-            sentencia.setString(1,correo);
-            datos = sentencia.executeQuery();
-
-            while(datos.next()){
-                if(datos.getString("Tipo").equals("1")){
-                    apuesta = new ApuestaTipo1(new UUID(0,0).fromString(datos.getString("ID")),datos.getDouble("cantidad"),
-                            datos.getDouble("cuota"),new UUID(0,0).fromString(datos.getString("IDPartido")),
-                            datos.getString("CorreoUsuario"),datos.getString("Tipo").charAt(0));
-                }else
-                if(datos.getString("Tipo").equals("2")){
-                    apuesta = new ApuestaTipo2(new UUID(0,0).fromString(datos.getString("ID")),datos.getDouble("cantidad"),
-                            datos.getDouble("cuota"),new UUID(0,0).fromString(datos.getString("IDPartido")),
-                            datos.getString("CorreoUsuario"),datos.getString("Tipo").charAt(0));
-                }else
-                if(datos.getString("Tipo").equals("3")){
-                    apuesta = new ApuestaTipo3(new UUID(0,0).fromString(datos.getString("ID")),datos.getDouble("cantidad"),
-                            datos.getDouble("cuota"),new UUID(0,0).fromString(datos.getString("IDPartido")),
-                            datos.getString("CorreoUsuario"),datos.getString("Tipo").charAt(0));
-                }
-                apuestas.add(apuesta);
-
-            }
-        }catch (SQLException e){
-            e.printStackTrace();
-        }finally {
-            try {
-                conexion.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-
-        return apuestas;
-    }
-
+    /*
+    Nombre: movimientosCuenta
+    Comentario: Con este metodo se crea un partido en la base de datos.
+    Cabecera: public int crearPartidoBBDD(Connection conexion, Partido partido)
+    Precondiciones: --
+    Entradas:
+            -Connection conexion
+            -Partido partido
+    Salidas: int filas
+    Postcondiciones: Devuelve asociado al nombre, el numero de filas afectadas.
+    */
     public int crearPartidoBBDD(Connection conexion, Partido partido){
         int filas = 0;
         PreparedStatement sentencia = null;
@@ -221,6 +192,17 @@ public class JDBC {
         return filas;
     }
 
+    /*
+    Nombre: consultarPartido
+    Comentario: Con este metodo se consultan las diferentes apuestas de un partido filtrando por tipo y resultado
+    Cabecera: public ArrayList<FullTipoApuesta> consultarPartido(Connection conexion,String idPartido)
+    Precondiciones: --
+    Entradas:
+            -Connection conexion
+            -String idPartido
+    Salidas: ArrayList<FullTipoApuesta> lista
+    Postcondiciones: Devuelve asociado al nombre, una lista FullTipoApuesta con su informacion.
+    */
     public ArrayList<FullTipoApuesta> consultarPartido(Connection conexion,String idPartido){
         CallableStatement cstmt = null;
         boolean execute = false;

@@ -163,7 +163,7 @@ public class Main {
                                         correo = teclado.next();
 
                                         conexion = jdbc.crearConexion(usuario, contrasenha);
-                                        movimientosCuenta = jdbc.movimientosCuenta(conexion,correo);
+                                        //movimientosCuenta = jdbc.movimientosCuenta(conexion,correo);
 
                                         for(int i = 0; i < movimientosCuenta.size(); i++) {
                                             System.out.println(movimientosCuenta.get(i).getId() + " �" + " -> " + movimientosCuenta.get(i).getCantidad()
