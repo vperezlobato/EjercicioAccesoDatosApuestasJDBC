@@ -3,6 +3,7 @@ package com.company.Gestionadoras;
 import com.company.ClaseAbstracta.Apuesta;
 import com.company.Clases.*;
 
+import javax.naming.PartialResultException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.UUID;
@@ -791,4 +792,38 @@ public class JDBC {
 
         return realizado;
     }
+
+    /*
+    Nombre: partidos
+    Comentario: Con este metodo se devuelven una coleccion de los partidos con sus equipos
+    Cabecera: public ArrayList<PartidoConEquipos> partidos (Connection conn)
+    Precondiciones: No hay
+    Entrada: Connection conexion //El objeto asociado a la conexion
+    Salida:  ArrayList<PartidoConEquipos> partidos //El array con los objetos con los partidos con equipos
+    E/S: No hay
+    Postcondiciones: Asociado al nombre, La coleccion de los partidos con equipos
+     */
+    public ArrayList<PartidoConEquipos> partidos (Connection conn) {
+        String query = "SELECT P.ID, P.competicion, Local.Equipo AS EquipoLocal, Visitante.Equipo AS EquipoVisitante FROM Partidos AS P \n" +
+                " INNER JOIN (SELECT PA.ID, EP.Equipo FROM Partidos AS PA INNER JOIN EquiposPartidos AS EP ON PA.ID = EP.Partido WHERE EP.Tipo = 'L') AS Local ON P.ID = Local.ID \n" +
+                " INNER JOIN (SELECT PA.ID, EP.Equipo FROM Partidos AS PA INNER JOIN EquiposPartidos AS EP ON PA.ID = EP.Partido WHERE EP.Tipo = 'V') AS Visitante ON P.ID = Visitante.ID \n ";
+        PartidoConEquipos partido;
+        ArrayList<PartidoConEquipos> partidos = new ArrayList<>();
+        ResultSet rs = null;
+        try {
+            Statement s = conn.createStatement();
+            rs = s.executeQuery(query);
+
+            while(rs.next()) {
+                partido = new PartidoConEquipos(new UUID(0,0).fromString(rs.getString("ID")), rs.getString("competicion"), rs.getString("EquipoLocal"), rs.getString("EquipoVisitante"));
+                partidos.add(partido);
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return partidos;
+    }
+
 }
