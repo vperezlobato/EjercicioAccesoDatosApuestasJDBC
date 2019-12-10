@@ -3,12 +3,14 @@ package com.company;
 import com.company.ClaseAbstracta.Apuesta;
 import com.company.Clases.Movimiento;
 import com.company.Clases.Partido;
+import com.company.Clases.movimientosCuenta;
 import com.company.Gestionadoras.JDBC;
 import com.company.Utilidades.Utilidades;
 
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.UUID;
 
 /*
 PG Level 0
@@ -59,17 +61,21 @@ public class PruebaMain {
         String correo = "";
         String usuario = "";
         String contrasenha = "";
+        boolean execute = false;
+        Connection conexion = null;
         Scanner teclado = new Scanner(System.in);
         Utilidades utd = new Utilidades();
         JDBC jdbc = new JDBC();
-        boolean execute = false;
-        Connection conexion = null;
+        Character unoxdos = ' ';
+        UUID idPartido;
 
         //Variables para mostrar los datos de la consulta
         ArrayList<Apuesta> apuestasRealizadas = new ArrayList<Apuesta>();
         ArrayList<Movimiento> movimientosCuenta= new ArrayList<Movimiento>();
         ArrayList<Apuesta> apuestasGanadas = new ArrayList<Apuesta>();
         ArrayList<Partido> partidos = new ArrayList<>();
+        movimientosCuenta movimientos = new movimientosCuenta();
+        ArrayList<Partido> partidosDisponibles = new ArrayList<>();
         int filas = 0;
 
         Partido partido = new Partido();
@@ -100,16 +106,36 @@ public class PruebaMain {
                         while(opcionSubMenu != 0) {
                             switch (opcionSubMenu) {
                                     case 1:
-                                        System.out.println("Realizar Apuesta");
+                                        conexion = jdbc.crearConexion(usuario, contrasenha);
+                                        cantidad = utd.leerYValidarCantidad();
+                                        //partidos = jdbc.partido(conexion);
+                                        //eleccion = utd.mostrarPartidos(partidos); //acuerdate eleccion es UUID
+                                        unoxdos = utd.leerYValidarUnoXDos(); //falta en utilidades el metodo que valide esto
+                                        System.out.println("Introduce un correo: ");
+                                        correo = teclado.next();
+                                        execute = jdbc.realizarApuesta(conexion, cantidad, eleccion, correo, unoxdos);
+                                        if(execute){
+                                            System.out.println("Se ha relizar la apuesta correctamente");
+                                        }
                                         break;
 
-                                    case 2:
-                                        System.out.println("Ver partidos disponibles");
+                                    case 2://ver partidos disponibles
+                                        conexion = jdbc.crearConexion(usuario, contrasenha);
+                                        partidosDisponibles = jdbc.partidosAbiertos(conexion);
+
+                                        for(int i = 0; i< partidosDisponibles.size(); i++){
+                                            System.out.println(partidosDisponibles.get(i).getID() + " �" + " -> " + partidosDisponibles.get(i).getCompeticion()
+                                                    + " -> " + partidosDisponibles.get(i).getGolLocal() + " -> " + partidosDisponibles.get(i).getGolVisitante()
+                                                    + " -> " + partidosDisponibles.get(i).getFechaInicio() + " -> " + partidosDisponibles.get(i).getFechaFin()
+                                                    + " -> " + partidosDisponibles.get(i).getEstaAbierto() + " -> " + partidosDisponibles.get(i).getLimiteAlcanzadoTipo1()
+                                                    + " -> " + partidosDisponibles.get(i).getLimiteAlcanzadoTipo2() + " -> " + partidosDisponibles.get(i).getLimiteAlcanzadoTipo3());
+
+                                        }
                                         break;
 
                                     case 3:
                                         System.out.println("Comprobar Apuesta Anterior");
-                                        break;
+                                    break;
 
                                     case 4:
                                         System.out.println("Cuenta");
@@ -129,7 +155,7 @@ public class PruebaMain {
                                                 if(execute){
                                                     System.out.println("Se ha ingresado correctamente");
                                                 }
-                                                break;
+                                            break;
 
                                             case 2:
                                                 //System.out.println("Retirar Dinero");
@@ -144,7 +170,7 @@ public class PruebaMain {
                                                 if(execute){
                                                     System.out.println("Se ha retirado correctamente");
                                                 }
-                                                break;
+                                            break;
 
                                             case 3:
                                                 //System.out.println("Movimientos de la cuenta");
@@ -152,13 +178,11 @@ public class PruebaMain {
                                                 correo = teclado.next();
 
                                                 conexion = jdbc.crearConexion(usuario, contrasenha);
-                                                movimientosCuenta = jdbc.movimientosCuenta(conexion,correo);
+                                                movimientos = jdbc.movimientosCuenta(conexion,correo);
 
-                                                for(int i = 0; i < movimientosCuenta.size(); i++) {
-                                                    System.out.println(movimientosCuenta.get(i).getId() + " �" + " -> " + movimientosCuenta.get(i).getCantidad()
-                                                            + " -> " + movimientosCuenta.get(i).getCorreoUsuario() + " -> " + movimientosCuenta.get(i).getTipo());
-                                                }
-                                                break;
+                                                System.out.println(movimientos.getCorreoUsuario() + " �" + " -> " + movimientos.getNumeroApuestasGanadas()
+                                                        + " -> " + movimientos.getNumeroApuestasRealizadas());
+                                            break;
                                         }
                                         opcionCuenta = utd.leerYValidarOpcionSubMenuCuenta();
                                     }
@@ -183,23 +207,40 @@ public class PruebaMain {
                                     if(filas > 0){
                                         System.out.println("Se ha creado el partido correctamente");
                                     }
-                                    break;
+                                break;
 
-                                case 2:
-                                    System.out.println("Abrir Partido");
-                                    break;
+                                case 2://abrirPartido
+                                    conexion = jdbc.crearConexion(usuario, contrasenha);
+                                    //partidos = jdbc.partido(conexion);
+                                    //eleccion = utd.mostrarPartidos(partidos);
+                                    //execute = jdbc.abrirPartido(eleccion);
+                                    if(execute){
+                                        System.out.println("Se ha abierto el partido correctamente");
+                                    }
+                                break;
 
-                                case 3:
-                                    System.out.println("Cerrar Partido");
-                                    break;
+                                case 3://cerrarPartido
+                                    conexion = jdbc.crearConexion(usuario, contrasenha);
+                                    //partidos = jdbc.partido(conexion);
+                                    //eleccion = utd.mostrarPartidos(partidos);
+                                    //execute = jdbc.cerrarPartido(eleccion);
+                                    if(execute){
+                                        System.out.println("Se ha cerrado el partido correctamente");
+                                    }
+                                break;
 
-                                case 4:
-                                    System.out.println("Apuestas del partido");
-                                    break;
+                                case 4: //consultar apuestas del partido
+                                    conexion = jdbc.crearConexion(usuario, contrasenha);
+                                    //partidos = jdbc.partido(conexion);
+                                    //eleccion = utd.mostrarPartidos(partidos);
+                                    //convertir la eleccion en String que es lo que recibe por parametros consultarPartido
+                                     //arrayList = jdbc.consultarPartido(conexion,eleccion);
+                                     //mostrar datos
+                                break;
 
                                 case 5:
                                     System.out.println("Pagar las apuestas ganadas del partido");
-                                    break;
+                                break;
                             }
                             opcionSubMenu = utd.leerYValidarOpcionMenuAdministrador();
                         }

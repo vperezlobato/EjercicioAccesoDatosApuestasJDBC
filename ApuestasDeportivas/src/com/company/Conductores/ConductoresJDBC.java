@@ -18,13 +18,12 @@ public class ConductoresJDBC {
         GregorianCalendar fechaInicio =  new GregorianCalendar(2019,5,12,21,30,25);
         GregorianCalendar fechaFin =  new GregorianCalendar(2019,6,12,21,30,25);
         conexion = jdbc.crearConexion("victor", "victor");
-        ArrayList<movimientosCuenta> movimientos = new ArrayList<movimientosCuenta>();
+        movimientosCuenta movimientos = new movimientosCuenta();
 
         movimientos = jdbc.movimientosCuenta(conexion,"test@test.test");
 
-        for(int i = 0; i < movimientos.size(); i++) {
-            System.out.println(movimientos.get(i).getCorreoUsuario() + " �" + " -> " + movimientos.get(i).getNumeroApuestasGanadas()
-                    + " -> " + movimientos.get(i).getNumeroApuestasRealizadas());
-        }
+        System.out.println(movimientos.getCorreoUsuario() + " �" + " -> " + movimientos.getNumeroApuestasGanadas()
+                + " -> " + movimientos.getNumeroApuestasRealizadas());
+
     }
 }
