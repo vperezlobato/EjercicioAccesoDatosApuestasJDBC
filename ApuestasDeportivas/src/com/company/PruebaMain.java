@@ -1,7 +1,13 @@
 package com.company;
 
+import com.company.ClaseAbstracta.Apuesta;
+import com.company.Clases.Movimiento;
+import com.company.Clases.Partido;
+import com.company.Gestionadoras.JDBC;
 import com.company.Utilidades.Utilidades;
 
+import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 /*
@@ -49,12 +55,26 @@ public class PruebaMain {
         int opcionMenu = 0;
         int opcionSubMenu = 0;
         int opcionCuenta = 0;
+        double cantidad = 0;
+        String correo = "";
         String usuario = "";
         String contrasenha = "";
         Scanner teclado = new Scanner(System.in);
         Utilidades utd = new Utilidades();
+        JDBC jdbc = new JDBC();
+        boolean execute = false;
+        Connection conexion = null;
 
-        //Login
+        //Variables para mostrar los datos de la consulta
+        ArrayList<Apuesta> apuestasRealizadas = new ArrayList<Apuesta>();
+        ArrayList<Movimiento> movimientosCuenta= new ArrayList<Movimiento>();
+        ArrayList<Apuesta> apuestasGanadas = new ArrayList<Apuesta>();
+        ArrayList<Partido> partidos = new ArrayList<>();
+        int filas = 0;
+
+        Partido partido = new Partido();
+
+            //Login
             System.out.println("Introduce el usuario");
             usuario = teclado.next();
             System.out.println("Introduce la contrasenha");
@@ -97,16 +117,47 @@ public class PruebaMain {
 
                                     while(opcionCuenta != 0) {
                                         switch (opcionCuenta) {
-                                            case 1:
-                                                System.out.println("Ingresar Dinero");
+                                            case 1: //Ingresar Dinero
+                                                //System.out.println("Ingresar Dinero");
+                                                cantidad = utd.leerYValidarCantidad();
+                                                System.out.println("Introduce un correo: ");
+                                                correo = teclado.next();
+
+                                                conexion = jdbc.crearConexion(usuario, contrasenha);
+                                                execute = jdbc.ingresarDinero(conexion, cantidad, correo);
+
+                                                if(execute){
+                                                    System.out.println("Se ha ingresado correctamente");
+                                                }
                                                 break;
 
                                             case 2:
-                                                System.out.println("Retirar Dinero");
+                                                //System.out.println("Retirar Dinero");
+                                                //RetirarDinero
+                                                cantidad = utd.leerYValidarCantidad();
+                                                System.out.println("Introduce un correo: ");
+                                                correo = teclado.next();
+
+                                                conexion = jdbc.crearConexion(usuario, contrasenha);
+                                                execute = jdbc.retirarDinero(conexion, cantidad, correo);
+
+                                                if(execute){
+                                                    System.out.println("Se ha retirado correctamente");
+                                                }
                                                 break;
 
                                             case 3:
-                                                System.out.println("Movimientos de la cuenta");
+                                                //System.out.println("Movimientos de la cuenta");
+                                                System.out.println("Introduce un correo: ");
+                                                correo = teclado.next();
+
+                                                conexion = jdbc.crearConexion(usuario, contrasenha);
+                                                movimientosCuenta = jdbc.movimientosCuenta(conexion,correo);
+
+                                                for(int i = 0; i < movimientosCuenta.size(); i++) {
+                                                    System.out.println(movimientosCuenta.get(i).getId() + " �" + " -> " + movimientosCuenta.get(i).getCantidad()
+                                                            + " -> " + movimientosCuenta.get(i).getCorreoUsuario() + " -> " + movimientosCuenta.get(i).getTipo());
+                                                }
                                                 break;
                                         }
                                         opcionCuenta = utd.leerYValidarOpcionSubMenuCuenta();
@@ -124,7 +175,14 @@ public class PruebaMain {
                         while(opcionSubMenu != 0) {
                             switch (opcionSubMenu) {
                                 case 1:
-                                    System.out.println("Crear Partido");
+                                    //System.out.println("Crear Partido");
+                                    //CrearPartido
+                                    partido = utd.crearPartido();
+                                    conexion = jdbc.crearConexion(usuario, contrasenha);
+                                    filas = jdbc.crearPartidoBBDD(conexion,partido);
+                                    if(filas > 0){
+                                        System.out.println("Se ha creado el partido correctamente");
+                                    }
                                     break;
 
                                 case 2:
@@ -143,8 +201,9 @@ public class PruebaMain {
                                     System.out.println("Pagar las apuestas ganadas del partido");
                                     break;
                             }
-                            break;
+                            opcionSubMenu = utd.leerYValidarOpcionMenuAdministrador();
                         }
+                        break;
                 }
                 if (admin) {
                     opcionMenu = utd.leerYValidarOpcionMenuLoginConUsuario();
