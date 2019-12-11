@@ -826,4 +826,23 @@ public class JDBC {
         return partidos;
     }
 
+
+    public ArrayList<Apuesta> obtenerApuestas(Connection conn) {
+        ArrayList<Apuesta> apuestas = new ArrayList<>();
+        ResultSet rs = null;
+        String query = "SELECT * FROM Apuestas ";
+        try {
+            PreparedStatement ps = conn.prepareStatement(query);
+            rs = ps.executeQuery();
+
+            if(rs.next()) {
+                apuestas.add(new Apuesta(new UUID(0,0).fromString(rs.getString("ID")), rs.getDouble("cantidad"), rs.getDouble("cuota"), new UUID(0,0).fromString(rs.getString("IDPartido")), rs.getString("CorreoUsuario"), rs.getString("Tipo").charAt(0)));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return apuestas;
+    }
 }

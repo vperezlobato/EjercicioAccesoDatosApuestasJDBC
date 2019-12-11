@@ -1,11 +1,14 @@
 package com.company.Utilidades;
 
+import com.company.ClaseAbstracta.Apuesta;
 import com.company.Clases.Partido;
+import com.company.Clases.PartidoConEquipos;
 
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.Scanner;
 import java.util.UUID;
@@ -341,6 +344,56 @@ public class Utilidades {
         }
 
         return correcto;
+    }
+
+    public UUID mostrarPartidos(ArrayList<PartidoConEquipos> partidos) {
+        Scanner teclado = new Scanner(System.in);
+        int opcion = 0;
+        int contador = 1;
+        System.out.println("Elige un partido");
+        for(PartidoConEquipos p : partidos) {
+            System.out.println(contador + "." + " " + p.getId() + " " + p.getCompeticion() + " " + p.getEquipoLocal() + " " + p.getEquipoVisitante());
+        }
+        opcion = teclado.nextInt();
+        UUID id = partidos.get(opcion-1).getId();
+        return id;
+    }
+
+    public char leerYValidarUnoXDos(){
+        Scanner teclado = new Scanner(System.in);
+        char unoxdos = ' ';
+
+        do{
+            System.out.println("Introduce el ganador [1X2]:");
+            unoxdos = Character.toLowerCase(teclado.next().charAt(0));
+        }while(unoxdos != '1'  && unoxdos != '2' && unoxdos != 'x');
+
+        return unoxdos;
+    }
+
+    public char leerYValidarTipo(){
+        Scanner teclado = new Scanner(System.in);
+        char tipo = ' ';
+
+        do{
+            System.out.println("Introduce el tipo [1 2 3]:");
+            tipo = Character.toLowerCase(teclado.next().charAt(0));
+        }while(tipo != '1'  && tipo != '2' && tipo != '3');
+
+        return tipo;
+    }
+
+    public UUID mostrarApuestas(ArrayList<Apuesta> apuestas) {
+        Scanner teclado = new Scanner(System.in);
+        int opcion = 0;
+        int contador = 1;
+        System.out.println("Elige un partido");
+        for(Apuesta p : apuestas) {
+            System.out.println(contador + "." + " " + p.getId() + " " + p.getCantidad() + " " + p.getCuota() + " " + p.getIdPartido() + " " + p.getCorreoUsuario() + " " + p.getTipo());
+        }
+        opcion = teclado.nextInt();
+        UUID id = apuestas.get(opcion-1).getId();
+        return id;
     }
 
 }

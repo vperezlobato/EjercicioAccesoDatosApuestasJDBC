@@ -2,7 +2,8 @@ package com.company.ClaseAbstracta;
 
 import java.util.UUID;
 
-public abstract class Apuesta {
+//Era abstracto
+public class Apuesta {
 
     private UUID id;
     private Double cantidad;

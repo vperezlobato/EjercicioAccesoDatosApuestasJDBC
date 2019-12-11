@@ -3,6 +3,7 @@ package com.company;
 import com.company.ClaseAbstracta.Apuesta;
 import com.company.Clases.Movimiento;
 import com.company.Clases.Partido;
+import com.company.Clases.PartidoConEquipos;
 import com.company.Clases.movimientosCuenta;
 import com.company.Gestionadoras.JDBC;
 import com.company.Utilidades.Utilidades;
@@ -62,11 +63,13 @@ public class PruebaMain {
         String usuario = "";
         String contrasenha = "";
         boolean execute = false;
+        UUID eleccion = null;
         Connection conexion = null;
         Scanner teclado = new Scanner(System.in);
         Utilidades utd = new Utilidades();
         JDBC jdbc = new JDBC();
         Character unoxdos = ' ';
+        Character tipo = ' ';
         UUID idPartido;
 
         //Variables para mostrar los datos de la consulta
@@ -74,6 +77,7 @@ public class PruebaMain {
         ArrayList<Movimiento> movimientosCuenta= new ArrayList<Movimiento>();
         ArrayList<Apuesta> apuestasGanadas = new ArrayList<Apuesta>();
         ArrayList<Partido> partidos = new ArrayList<>();
+        ArrayList<PartidoConEquipos> partidosFull = new ArrayList<>();
         movimientosCuenta movimientos = new movimientosCuenta();
         ArrayList<Partido> partidosDisponibles = new ArrayList<>();
         int filas = 0;
@@ -108,8 +112,8 @@ public class PruebaMain {
                                     case 1:
                                         conexion = jdbc.crearConexion(usuario, contrasenha);
                                         cantidad = utd.leerYValidarCantidad();
-                                        //partidos = jdbc.partido(conexion);
-                                        //eleccion = utd.mostrarPartidos(partidos); //acuerdate eleccion es UUID
+                                        partidosFull = jdbc.partidos(conexion);
+                                        eleccion = utd.mostrarPartidos(partidosFull);
                                         unoxdos = utd.leerYValidarUnoXDos(); //falta en utilidades el metodo que valide esto
                                         System.out.println("Introduce un correo: ");
                                         correo = teclado.next();
@@ -124,7 +128,7 @@ public class PruebaMain {
                                         partidosDisponibles = jdbc.partidosAbiertos(conexion);
 
                                         for(int i = 0; i< partidosDisponibles.size(); i++){
-                                            System.out.println(partidosDisponibles.get(i).getID() + " �" + " -> " + partidosDisponibles.get(i).getCompeticion()
+                                            System.out.println(partidosDisponibles.get(i).getId() + " �" + " -> " + partidosDisponibles.get(i).getCompeticion()
                                                     + " -> " + partidosDisponibles.get(i).getGolLocal() + " -> " + partidosDisponibles.get(i).getGolVisitante()
                                                     + " -> " + partidosDisponibles.get(i).getFechaInicio() + " -> " + partidosDisponibles.get(i).getFechaFin()
                                                     + " -> " + partidosDisponibles.get(i).getEstaAbierto() + " -> " + partidosDisponibles.get(i).getLimiteAlcanzadoTipo1()
@@ -134,7 +138,25 @@ public class PruebaMain {
                                         break;
 
                                     case 3:
-                                        System.out.println("Comprobar Apuesta Anterior");
+                                        //Menu Apuestas y que el usuario elija
+                                        conexion = jdbc.crearConexion(usuario, contrasenha);
+                                        tipo = utd.leerYValidarTipo();
+                                        eleccion = utd.mostrarApuestas(jdbc.obtenerApuestas(conexion));
+                                        switch (tipo) {
+                                            case 1:
+                                                jdbc.apuestaCompleta(conexion, eleccion, tipo);
+                                            break;
+
+                                            case 2:
+                                                jdbc.apuestaCompleta(conexion, eleccion, tipo);
+                                                break;
+
+                                            case 3:
+                                                jdbc.apuestaCompleta(conexion, eleccion, tipo);
+                                                break;
+
+                                        }
+                                        //System.out.println("Comprobar Apuesta Anterior");
                                     break;
 
                                     case 4:
