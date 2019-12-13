@@ -48,7 +48,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.ConductoresJDBC">
+  <component name="RunManager" selected="Application.PruebaMain">
     <configuration name="ConductoresJDBC" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.company.Conductores.ConductoresJDBC" />
       <module name="ApuestasDeportivas" />
@@ -81,8 +81,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.ConductoresJDBC" />
         <item itemvalue="Application.PruebaMain" />
+        <item itemvalue="Application.ConductoresJDBC" />
         <item itemvalue="Application.Main" />
       </list>
     </recent_temporary>
@@ -112,7 +112,23 @@
       <workItem from="1575017405663" duration="15000" />
       <workItem from="1575365300638" duration="2316000" />
       <workItem from="1575966653092" duration="2935000" />
+      <workItem from="1576153927671" duration="9000" />
+      <workItem from="1576225612615" duration="7770000" />
     </task>
     <servers />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/com/company/Gestionadoras/JDBC.java</url>
+          <line>24</line>
+          <properties class="com.company.Gestionadoras.JDBC" method="crearConexion">
+            <option name="EMULATED" value="true" />
+          </properties>
+          <option name="timeStamp" value="12" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

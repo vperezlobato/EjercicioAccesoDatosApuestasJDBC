@@ -353,6 +353,7 @@ public class Utilidades {
         System.out.println("Elige un partido");
         for(PartidoConEquipos p : partidos) {
             System.out.println(contador + "." + " " + p.getId() + " " + p.getCompeticion() + " " + p.getEquipoLocal() + " " + p.getEquipoVisitante());
+            contador++;
         }
         opcion = teclado.nextInt();
         UUID id = partidos.get(opcion-1).getId();

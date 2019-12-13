@@ -7,11 +7,11 @@ public class FullTipoApuesta {
     private Character localOVisitante;
     private Integer goles;
     private Character unoxDos;
-    private Integer totalApostado;
+    private Double totalApostado;
 
     public FullTipoApuesta(){}
 
-    public FullTipoApuesta(Character tipo,Integer golLocal,Integer golVisitante, Character localOVisitante,Integer goles,Character unoxDos,Integer totalApostado){
+    public FullTipoApuesta(Character tipo,Integer golLocal,Integer golVisitante, Character localOVisitante,Integer goles,Character unoxDos,Double totalApostado){
         this.tipo = tipo;
         this.golLocal = golLocal;
         this.golVisitante = golVisitante;
@@ -45,7 +45,7 @@ public class FullTipoApuesta {
         return unoxDos;
     }
 
-    public Integer getTotalApostado() {
+    public Double getTotalApostado() {
         return totalApostado;
     }
 }

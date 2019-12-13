@@ -204,19 +204,27 @@ public class JDBC {
     Salidas: ArrayList<FullTipoApuesta> lista
     Postcondiciones: Devuelve asociado al nombre, una lista FullTipoApuesta con su informacion.
     */
-    public ArrayList<FullTipoApuesta> consultarPartido(Connection conexion,String idPartido){
-        CallableStatement cstmt = null;
+    public ArrayList<FullTipoApuesta> consultarPartido(Connection conexion,UUID idPartido){
+        PreparedStatement sentencia = null;
         boolean execute = false;
         ResultSet datos;
         FullTipoApuesta fullTipoApuestas;
         ArrayList<FullTipoApuesta> lista = new ArrayList<FullTipoApuesta>();
+        String miOrden = "";
         try {
-            cstmt = conexion.prepareCall("{ call consultarPartido(?)}");
-            cstmt.setString(1, idPartido);
-            datos = cstmt.executeQuery();
+            miOrden = " Select A.Tipo , AT1.GolesLocal , AT1.GolesVisitante , AT2.Goles , AT2.LocalOVisitante , AT3.[1X2] , SUM(A.cantidad) AS [Total Apostado] from Partidos AS P " +
+                    " INNER JOIN Apuestas AS A ON A.IDPartido = P.ID " +
+                    " LEFT JOIN ApuestasTipo1 AS AT1 ON AT1.IDApuesta = A.ID " +
+                    " LEFT JOIN ApuestasTipo2 AS AT2 ON AT2.IDApuesta = A.ID " +
+                    " LEFT JOIN ApuestasTipo3 AS AT3 ON AT3.IDApuesta = A.ID " +
+                    " WHERE P.ID = ? " +
+                    " group by A.Tipo,AT1.GolesLocal,AT1.GolesVisitante,AT2.Goles,AT2.LocalOVisitante,AT3.[1X2] ";
+            sentencia = conexion.prepareStatement(miOrden);
+            sentencia.setObject(1,idPartido);
+            datos = sentencia.executeQuery();
 
             while(datos.next()) {
-                fullTipoApuestas = new FullTipoApuesta(datos.getString("Tipo").charAt(0), datos.getInt("GolesLocal"),datos.getInt("GolesVisitante") ,datos.getString("LocalOVisitante").charAt(0),datos.getInt("Goles"),datos.getString("unoxDos").charAt(0),datos.getInt("TotalApostado"));
+                fullTipoApuestas = new FullTipoApuesta(datos.getString("Tipo").charAt(0), datos.getInt("GolesLocal"),datos.getInt("GolesVisitante") ,datos.getString("LocalOVisitante").charAt(0),datos.getInt("Goles"),datos.getString("1X2").charAt(0),datos.getDouble("Total Apostado"));
                 lista.add(fullTipoApuestas);
             }
         }catch (SQLException e) {
