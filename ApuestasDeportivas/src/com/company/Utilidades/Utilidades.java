@@ -156,7 +156,7 @@ public class Utilidades {
 
         boolean dev = false;
 
-        if(anio >= 1582 && (mes >= 1 && mes <= 12) && dia >=1 && (hora >= 0 && hora < 23) && (minutos > 0 && minutos < 60) && (segundos > 0 && segundos < 60)){
+        if(anio >= 1582 && (mes >= 1 && mes <= 12) && dia >=1 && (hora >= 0 && hora < 23) && (minutos >= 0 && minutos < 60) && (segundos >= 0 && segundos < 60)){
             switch(mes){
                 case 1: case 3: case 5: case 7: case 8: case 10: case 12:
                     if(dia <= 31){
