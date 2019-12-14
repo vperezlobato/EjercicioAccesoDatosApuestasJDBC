@@ -27,6 +27,7 @@ public class ApuestaTipo1 extends Apuesta {
         super(id, cantidad, cuota, idPartido, correoUsuario, tipo);
     }
 
+
     public Integer getGolLocal() {
         return golLocal;
     }
@@ -41,5 +42,13 @@ public class ApuestaTipo1 extends Apuesta {
 
     public void setGolVisitante(Integer golVisitante) {
         this.golVisitante = golVisitante;
+    }
+
+    @Override
+    public String toString() {
+        return "ApuestaTipo1{" +
+                "golLocal=" + golLocal +
+                ", golVisitante=" + golVisitante +
+                "} " + super.toString();
     }
 }

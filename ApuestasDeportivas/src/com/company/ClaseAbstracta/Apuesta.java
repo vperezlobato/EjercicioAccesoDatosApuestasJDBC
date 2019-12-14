@@ -83,5 +83,17 @@ public class Apuesta {
     public void setTipo(Character tipo) {
         this.tipo = tipo;
     }
+
+    @Override
+    public String toString() {
+        return "Apuesta{" +
+                "id=" + id +
+                ", cantidad=" + cantidad +
+                ", cuota=" + cuota +
+                ", idPartido=" + idPartido +
+                ", correoUsuario='" + correoUsuario + '\'' +
+                ", tipo=" + tipo +
+                '}';
+    }
 }
 

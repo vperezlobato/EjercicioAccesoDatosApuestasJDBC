@@ -43,4 +43,12 @@ public class ApuestaTipo2 extends Apuesta {
     public void setGoles(Integer goles) {
         this.goles = goles;
     }
+
+    @Override
+    public String toString() {
+        return "ApuestaTipo2{" +
+                "localOVisitante=" + localOVisitante +
+                ", goles=" + goles +
+                "} " + super.toString();
+    }
 }

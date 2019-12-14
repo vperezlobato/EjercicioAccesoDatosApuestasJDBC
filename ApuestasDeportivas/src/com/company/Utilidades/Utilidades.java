@@ -372,6 +372,19 @@ public class Utilidades {
         return unoxdos;
     }
 
+
+    public char leerYValidarUnoDos(){
+        Scanner teclado = new Scanner(System.in);
+        char unodos = ' ';
+
+        do{
+            System.out.println("Introduce el ganador [1 o 2]:");
+            unodos = Character.toLowerCase(teclado.next().charAt(0));
+        }while(unodos != '1'  && unodos != '2');
+
+        return unodos;
+    }
+
     public char leerYValidarTipo(){
         Scanner teclado = new Scanner(System.in);
         char tipo = ' ';
@@ -388,13 +401,26 @@ public class Utilidades {
         Scanner teclado = new Scanner(System.in);
         int opcion = 0;
         int contador = 1;
-        System.out.println("Elige un partido");
+        System.out.println("Elige una apuesta");
         for(Apuesta p : apuestas) {
             System.out.println(contador + "." + " " + p.getId() + " " + p.getCantidad() + " " + p.getCuota() + " " + p.getIdPartido() + " " + p.getCorreoUsuario() + " " + p.getTipo());
+            contador++;
         }
         opcion = teclado.nextInt();
         UUID id = apuestas.get(opcion-1).getId();
         return id;
+    }
+
+    public int golMayoroIgualque0(){
+        Scanner teclado = new Scanner(System.in);
+        int gol = 0;
+        do{
+            System.out.println("Recuerda: El gol es valido mayor que 0");
+            gol = teclado.nextInt();
+        }
+        while(gol < 0);
+
+        return gol;
     }
 
 }

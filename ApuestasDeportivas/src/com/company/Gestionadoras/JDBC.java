@@ -3,7 +3,6 @@ package com.company.Gestionadoras;
 import com.company.ClaseAbstracta.Apuesta;
 import com.company.Clases.*;
 
-import javax.naming.PartialResultException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.UUID;
@@ -23,7 +22,8 @@ public class JDBC {
      */
 
     public Connection crearConexion(String usuario,String contrasena){
-        String sourceURL = "jdbc:sqlserver://localhost;DatabaseName=CasaDeApuestas";
+        //String sourceURL = "jdbc:sqlserver://localhost;DatabaseName=CasaDeApuestas";
+        String sourceURL = "jdbc:sqlserver://DESKTOP-VEDOCS8;DatabaseName=CasaDeApuestas";
         Connection conexion = null;
         try {
             conexion = DriverManager.getConnection(sourceURL, usuario, contrasena);
@@ -50,12 +50,16 @@ public class JDBC {
      */
     public boolean ingresarDinero(Connection conexion,double cantidad,String correo){
         CallableStatement cstmt = null;
+        int filas = 0;
         boolean execute = false;
         try {
             cstmt = conexion.prepareCall("{ call IngresarDinero(?,?)}");
             cstmt.setDouble(1, cantidad);
             cstmt.setString(2, correo);
-            execute = cstmt.execute();
+            filas = cstmt.executeUpdate();
+            if(filas > 0) {
+                execute = true;
+            }
         }catch (SQLException e) {
             System.out.println("El ingreso no se ha podido realizar");
         }finally {
@@ -85,11 +89,15 @@ public class JDBC {
     public boolean retirarDinero(Connection conexion,double cantidad,String correo){
         CallableStatement cstmt = null;
         boolean execute = false;
+        int filas = 0;
         try {
             cstmt = conexion.prepareCall("{ call RetirarDinero(?,?)}");
             cstmt.setDouble(1, cantidad);
             cstmt.setString(2, correo);
-            execute = cstmt.execute();
+            filas = cstmt.executeUpdate();
+            if(filas > 0) {
+                execute = true;
+            }
         }catch (SQLException e) {
             System.out.println("El ingreso no se ha podido realizar");
         }finally {
@@ -113,11 +121,12 @@ public class JDBC {
      Salidas: movimientosCuenta movimientos
      Postcondiciones: Devuelve asociado al nombre, un movimientosCuenta con el correo del usuario, la apuestas realizadas, y las apuestas ganadas.
      */
-    public movimientosCuenta movimientosCuenta(Connection conexion, String correo){
+    public ArrayList<MovimientosCuenta> movimientosCuenta(Connection conexion, String correo){
         PreparedStatement sentencia = null;
         String miOrden = "";
         ResultSet datos = null;
-        movimientosCuenta movimientoCuenta = new movimientosCuenta();
+        MovimientosCuenta movimientoCuenta = new MovimientosCuenta();
+        ArrayList<MovimientosCuenta> movimientos = new ArrayList<>();
 
         try {
             miOrden = " Select M.correoUsuario,P.[Numero de apuestas],D.[Numero de apuestas ganadas] from Movimientos AS M " +
@@ -142,7 +151,10 @@ public class JDBC {
             sentencia.setString(2, correo);
             datos = sentencia.executeQuery();
 
-            movimientoCuenta = new movimientosCuenta(datos.getString("correoUsuario"), datos.getInt("Numero de apuestas"), datos.getInt("Numero de apuestas ganadas"));
+            while(datos.next()) {
+                movimientoCuenta = new MovimientosCuenta(datos.getString("correoUsuario"), datos.getInt("Numero de apuestas"), datos.getInt("Numero de apuestas ganadas"));
+                movimientos.add(movimientoCuenta);
+            }
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -154,7 +166,7 @@ public class JDBC {
             }
         }
 
-        return movimientoCuenta;
+        return movimientos;
     }
 
     /*
@@ -224,7 +236,14 @@ public class JDBC {
             datos = sentencia.executeQuery();
 
             while(datos.next()) {
-                fullTipoApuestas = new FullTipoApuesta(datos.getString("Tipo").charAt(0), datos.getInt("GolesLocal"),datos.getInt("GolesVisitante") ,datos.getString("LocalOVisitante").charAt(0),datos.getInt("Goles"),datos.getString("1X2").charAt(0),datos.getDouble("Total Apostado"));
+                fullTipoApuestas = new FullTipoApuesta(
+                        datos.getString("Tipo").charAt(0),
+                        (datos.getObject("GolesLocal") == null) ? -1 : datos.getInt("GolesLocal"),
+                        (datos.getObject("GolesVisitante") == null) ? - 1:  datos.getInt("GolesVisitante"),
+                        (datos.getObject("LocalOVisitante") == null) ? 'N' : datos.getString("LocalOVisitante").charAt(0) ,
+                        (datos.getObject("Goles") == null ? -1 : datos.getInt("Goles")),
+                        (datos.getObject("1X2") == null) ? 'N' : datos.getString("1X2").charAt(0) ,
+                        datos.getDouble("Total Apostado"));
                 lista.add(fullTipoApuestas);
             }
         }catch (SQLException e) {
@@ -261,6 +280,7 @@ public class JDBC {
         String query = "{CALL RealizarApuestaTipo1(?,?,?,?,?,?)}";
         double cuota = 0.0;
         boolean resultado = false;
+        int filas = 0;
         //ResultSet rs = null;
         cuota = calcularCuota(conexion,'1', idPartido, golLocal, golVisitante);
         if(cuota > 1.5) {
@@ -272,9 +292,12 @@ public class JDBC {
                 cs.setString(4, correo);
                 cs.setInt(5, golLocal);
                 cs.setInt(6, golVisitante);
-                cs.executeQuery();
+                filas = cs.executeUpdate();
 
-                resultado = true;
+                if(filas > 0) {
+                    resultado = true;
+                }
+
             }
             catch (SQLException e) {
                 e.printStackTrace();
@@ -306,6 +329,7 @@ public class JDBC {
         String query = "EXECUTE RealizarApuestaTipo2(?,?,?,?,?,?)";
         double cuota = 0.0;
         boolean resultado = false;
+        int filas = 0;
         cuota = calcularCuota(conexion,'2', idPartido, localOVisitante, goles);
         if(cuota > 1.5) {
             try {
@@ -317,9 +341,11 @@ public class JDBC {
                 cs.setString(5, String.valueOf(localOVisitante));
                 cs.setInt(6, goles);
 
-                cs.execute();
+                filas = cs.executeUpdate();
 
-                resultado = true;
+                if(filas > 0) {
+                    resultado = true;
+                }
 
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -349,6 +375,7 @@ public class JDBC {
     public boolean realizarApuesta(Connection conexion, Double cantidad, UUID idPartido, String correo, Character unoxdos) {
         String query = "EXECUTE RealizarApuestaTipo3(?,?,?,?,?)";
         double cuota = 0.0;
+        int filas = 0;
         boolean resultado = false;
         cuota = calcularCuota(conexion,'3', idPartido, unoxdos);
         if(cuota > 1.5) {
@@ -359,9 +386,11 @@ public class JDBC {
                 cs.setObject(3, idPartido);
                 cs.setString(4, correo);
                 cs.setString(5, String.valueOf(unoxdos));
-                resultado = cs.execute();
+                filas = cs.executeUpdate();
 
-                resultado = true;
+                if(filas > 0) {
+                    resultado = true;
+                }
 
 
             } catch (SQLException e) {
@@ -562,24 +591,27 @@ public class JDBC {
     Interfaz
     Nombre: partidosAbiertos
     Comentario: Con este metodo se mostrarian los partidos que estan abiertos en este momento
-    Cabecera: public ArrayList<Partido> partidosAbiertos(Connection conexion)
+    Cabecera: public ArrayList<PartidoConEquipos> partidosAbiertos(Connection conexion)
     Precondiciones: No hay
     Entrada: Connection conexion //El objeto asociado a la conexion
-    Salida: ArrayList<Partido> partidos //Una lista con los partidos que estan abiertos
+    Salida: ArrayList<PartidoConEquipos> partidos //Una lista con los partidos que estan abiertos
     E/S: No hay
     Postcondiciones: Asociado al nombre, una lista con los partidos que estan abiertos
      */
-    public ArrayList<Partido> partidosAbiertos(Connection conexion) {
-        String query = "SELECT * FROM Partidos WHERE EstaAbierto = 1";
-        Partido partido = new Partido();
-        ArrayList<Partido> partidos = new ArrayList<>();
+    public ArrayList<PartidoConEquipos> partidosAbiertos(Connection conexion) {
+        String query = "SELECT P.ID, P.competicion, Local.Equipo AS EquipoLocal, Visitante.Equipo AS EquipoVisitante FROM Partidos AS P " +
+                " INNER JOIN (SELECT PA.ID, EP.Equipo FROM Partidos AS PA INNER JOIN EquiposPartidos AS EP ON PA.ID = EP.Partido WHERE EP.Tipo = 'L') AS Local ON P.ID = Local.ID " +
+                " INNER JOIN (SELECT PA.ID, EP.Equipo FROM Partidos AS PA INNER JOIN EquiposPartidos AS EP ON PA.ID = EP.Partido WHERE EP.Tipo = 'V') AS Visitante ON P.ID = Visitante.ID " +
+                " WHERE EstaAbierto = 1";
+        PartidoConEquipos partido = new PartidoConEquipos();
+        ArrayList<PartidoConEquipos> partidos = new ArrayList<>();
         ResultSet rs = null;
         try {
             Statement s = conexion.createStatement();
             rs = s.executeQuery(query);
 
             while(rs.next()) {
-                partido = new Partido(rs.getString("competicion"), rs.getInt("golesLocal"), rs.getInt("golesVisitante"), (Timestamp) rs.getObject("fechaInicio"), (Timestamp)rs.getObject("fechaFin"));
+                partido = new PartidoConEquipos(new UUID(0,0).fromString(rs.getString("ID")), rs.getString("competicion"), rs.getString("EquipoLocal"), rs.getString("EquipoVisitante"));
                 partidos.add(partido);
             }
         }
@@ -634,13 +666,13 @@ public class JDBC {
     public ApuestaTipo1 apuestaCompletaTipo1(Connection conn, UUID idApuesta) {
         ApuestaTipo1 apuesta = new ApuestaTipo1();
         ResultSet rs = null;
-        String query = "SELECT A.CorreoUsuario, A.cantidad, A.cuota, IDPartido, A.Tipo, AT.GolesLocal, AT.GolesVisitante FROM Apuestas AS A INNER JOIN ApuestasTipo1 AS AT ON A.ID AND AT.IDApuestas WHERE AT.IDApuesta = ?";
+        String query = "SELECT A.ID,  A.CorreoUsuario, A.cantidad, A.cuota, IDPartido, A.Tipo, AT.GolesLocal, AT.GolesVisitante FROM Apuestas AS A INNER JOIN ApuestasTipo1 AS AT ON A.ID = AT.IDApuesta WHERE AT.IDApuesta = ?";
         try {
             PreparedStatement ps = conn.prepareStatement(query);
             ps.setObject(1, idApuesta);
             rs = ps.executeQuery();
 
-            if(rs.next()) {
+            while (rs.next()) {
                 apuesta = new ApuestaTipo1(new UUID(0,0).fromString(rs.getString("ID")), rs.getDouble("cantidad"), rs.getDouble("cuota"), new UUID(0,0).fromString(rs.getString("IDPartido")), rs.getString("CorreoUsuario"), rs.getString("Tipo").charAt(0), rs.getInt("GolesLocal"), rs.getInt("GolesVisitante"));
             }
 
@@ -665,13 +697,13 @@ public class JDBC {
     public ApuestaTipo2 apuestaCompletaTipo2(Connection conn, UUID idApuesta) {
         ApuestaTipo2 apuesta = new ApuestaTipo2();
         ResultSet rs = null;
-        String query = "SELECT A.CorreoUsuario, A.cantidad, A.cuota, IDPartido, A.Tipo, AT.LocalOVisitante, AT.Goles FROM Apuestas AS A INNER JOIN ApuestasTipo2 AS AT ON A.ID AND AT.IDApuestas WHERE AT.IDApuesta = ?";
+        String query = "SELECT A.ID,  A.CorreoUsuario, A.cantidad, A.cuota, IDPartido, A.Tipo, AT.LocalOVisitante, AT.Goles FROM Apuestas AS A INNER JOIN ApuestasTipo2 AS AT ON A.ID = AT.IDApuesta WHERE AT.IDApuesta = ?";
         try {
             PreparedStatement ps = conn.prepareStatement(query);
             ps.setObject(1, idApuesta);
             rs = ps.executeQuery();
 
-            if(rs.next()) {
+            while(rs.next()) {
                 apuesta = new ApuestaTipo2(new UUID(0,0).fromString(rs.getString("ID")), rs.getDouble("cantidad"), rs.getDouble("cuota"), new UUID(0,0).fromString(rs.getString("IDPartido")), rs.getString("CorreoUsuario"), rs.getString("Tipo").charAt(0), rs.getString("LocalOVisitante").charAt(0), rs.getInt("Goles"));
             }
 
@@ -696,14 +728,14 @@ public class JDBC {
     public ApuestaTipo3 apuestaCompletaTipo3(Connection conn, UUID idApuesta) {
         ApuestaTipo3 apuesta = new ApuestaTipo3();
         ResultSet rs = null;
-        String query = "SELECT A.CorreoUsuario, A.cantidad, A.cuota, IDPartido, A.Tipo, AT.[1X2] FROM Apuestas AS A INNER JOIN ApuestasTipo3 AS AT ON A.ID AND AT.IDApuestas WHERE AT.IDApuesta = ?";
+        String query = "SELECT A.ID, A.CorreoUsuario, A.cantidad, A.cuota, IDPartido, A.Tipo, AT.[1X2] FROM Apuestas AS A INNER JOIN ApuestasTipo3 AS AT ON A.ID = AT.IDApuesta WHERE AT.IDApuesta = ?";
         try {
             PreparedStatement ps = conn.prepareStatement(query);
             ps.setObject(1, idApuesta);
             rs = ps.executeQuery();
 
-            if(rs.next()) {
-                apuesta = new ApuestaTipo3(new UUID(0,0).fromString(rs.getString("ID")), rs.getDouble("cantidad"), rs.getDouble("cuota"), new UUID(0,0).fromString(rs.getString("IDPartido")), rs.getString("CorreoUsuario"), rs.getString("Tipo").charAt(0), rs.getString("[1X2]").charAt(0));
+            while(rs.next()) {
+                apuesta = new ApuestaTipo3(new UUID(0,0).fromString(rs.getString("ID")), rs.getDouble("cantidad"), rs.getDouble("cuota"), new UUID(0,0).fromString(rs.getString("IDPartido")), rs.getString("CorreoUsuario"), rs.getString("Tipo").charAt(0), rs.getString("1X2").charAt(0));
             }
 
         } catch (SQLException e) {
@@ -788,11 +820,16 @@ public class JDBC {
      */
     public boolean pagarApuestasGanadas (Connection conn, UUID idPartido) {
         boolean realizado = false;
+        int filas = 0;
         String query = "{CALL AñadirGanancias(?)}";
         try {
             CallableStatement cs = conn.prepareCall(query);
             cs.setObject(1, idPartido);
-            realizado = cs.execute();
+            filas = cs.executeUpdate();
+
+            if(filas > 0) {
+                realizado = true;
+            }
         }
         catch (SQLException e) {
             e.printStackTrace();
@@ -837,14 +874,16 @@ public class JDBC {
 
     public ArrayList<Apuesta> obtenerApuestas(Connection conn) {
         ArrayList<Apuesta> apuestas = new ArrayList<>();
+        Apuesta apuesta = new Apuesta();
         ResultSet rs = null;
-        String query = "SELECT * FROM Apuestas ";
+        String query = "SELECT * FROM Apuestas";
         try {
-            PreparedStatement ps = conn.prepareStatement(query);
-            rs = ps.executeQuery();
+            Statement st = conn.createStatement();
+            rs = st.executeQuery(query);
 
-            if(rs.next()) {
-                apuestas.add(new Apuesta(new UUID(0,0).fromString(rs.getString("ID")), rs.getDouble("cantidad"), rs.getDouble("cuota"), new UUID(0,0).fromString(rs.getString("IDPartido")), rs.getString("CorreoUsuario"), rs.getString("Tipo").charAt(0)));
+            while(rs.next()) {
+                apuesta = new Apuesta(new UUID(0,0).fromString(rs.getString("ID")), rs.getDouble("cantidad"), rs.getDouble("cuota"), new UUID(0,0).fromString(rs.getString("IDPartido")), rs.getString("CorreoUsuario"), rs.getString("Tipo").charAt(0));
+                apuestas.add(apuesta);
             }
 
         } catch (SQLException e) {

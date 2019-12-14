@@ -1,14 +1,14 @@
 package com.company.Clases;
 
-public class movimientosCuenta {
+public class MovimientosCuenta {
 
     private String correoUsuario;
     private int numeroApuestasRealizadas;
     private int numeroApuestasGanadas;
 
-    public movimientosCuenta(){}
+    public MovimientosCuenta(){}
 
-    public movimientosCuenta(String correoUsuario,int numeroApuestasRealizadas,int numeroApuestasGanadas){
+    public MovimientosCuenta(String correoUsuario, int numeroApuestasRealizadas, int numeroApuestasGanadas){
         this.correoUsuario = correoUsuario;
         this.numeroApuestasRealizadas = numeroApuestasRealizadas;
         this.numeroApuestasGanadas = numeroApuestasGanadas;

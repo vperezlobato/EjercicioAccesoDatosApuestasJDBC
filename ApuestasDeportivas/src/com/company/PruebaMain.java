@@ -50,11 +50,16 @@ Fin
 
  */
 public class PruebaMain {
+
     public static void main(String[] args) {
         boolean admin = true;
+        int filas = 0;
         int opcionMenu = 0;
         int opcionSubMenu = 0;
         int opcionCuenta = 0;
+        int gol = 0;
+        int golLocal = 0;
+        int golVisitante = 0;
         double cantidad = 0;
         String correo = "";
         String usuario = "";
@@ -66,10 +71,17 @@ public class PruebaMain {
         Utilidades utd = new Utilidades();
         JDBC jdbc = new JDBC();
         Character unoxdos = ' ';
+        Character unodos = ' ';
         Character tipo = ' ';
         UUID idPartido;
         String eleccionCadena = "";
-        ArrayList<FullTipoApuesta> fullTipoApuesta = new ArrayList<FullTipoApuesta>();
+
+        //Objetos de clases necesarios
+        ApuestaTipo1 apuestaTipo1 = new ApuestaTipo1();
+        ApuestaTipo2 apuestaTipo2 = new ApuestaTipo2();
+        ApuestaTipo3 apuestaTipo3 = new ApuestaTipo3();
+        MovimientosCuenta movimiento = new MovimientosCuenta();
+        Partido partido = new Partido();
 
         //Variables para mostrar los datos de la consulta
         ArrayList<Apuesta> apuestasRealizadas = new ArrayList<Apuesta>();
@@ -77,11 +89,12 @@ public class PruebaMain {
         ArrayList<Apuesta> apuestasGanadas = new ArrayList<Apuesta>();
         ArrayList<Partido> partidos = new ArrayList<Partido>();
         ArrayList<PartidoConEquipos> partidosFull = new ArrayList<PartidoConEquipos>();
-        movimientosCuenta movimientos = new movimientosCuenta();
-        ArrayList<Partido> partidosDisponibles = new ArrayList<Partido>();
-        int filas = 0;
+        ArrayList<FullTipoApuesta> fullTipoApuesta = new ArrayList<FullTipoApuesta>();
+        ArrayList<PartidoConEquipos> partidosDisponibles = new ArrayList<PartidoConEquipos>();
+        ArrayList<MovimientosCuenta> movimientos = new ArrayList<>();
 
-        Partido partido = new Partido();
+
+
 
             //Login
             System.out.println("Introduce el usuario");
@@ -113,13 +126,51 @@ public class PruebaMain {
                                         cantidad = utd.leerYValidarCantidad();
                                         partidosFull = jdbc.partidos(conexion);
                                         eleccion = utd.mostrarPartidos(partidosFull);
-                                        unoxdos = utd.leerYValidarUnoXDos();
-                                        System.out.println("Introduce un correo: ");
-                                        correo = teclado.next();
-                                        execute = jdbc.realizarApuesta(conexion, cantidad, eleccion, correo, unoxdos);
-                                        if(execute){
-                                            System.out.println("Se ha relizar la apuesta correctamente");
+                                        tipo = utd.leerYValidarTipo();
+                                        switch(tipo) {
+                                            case '1':
+                                                System.out.println("Elige los goles al equipo local");
+                                                golLocal = utd.golMayoroIgualque0();
+                                                System.out.println("Elige los goles al equipo visitante");
+                                                golVisitante = utd.golMayoroIgualque0();
+                                                System.out.println("Introduce un correo: ");
+                                                correo = teclado.next();
+                                                execute = jdbc.realizarApuesta(conexion, cantidad, eleccion, correo, golLocal, golVisitante);
+                                                if(execute){
+                                                    System.out.println("Se ha relizar la apuesta correctamente");
+                                                }
+                                                else {
+                                                    System.out.println("Ha habido un error");
+                                                }
+                                                break;
+
+                                            case '2':
+                                                unodos = utd.leerYValidarUnoDos();
+                                                System.out.println("Elige los goles");
+                                                gol = utd.golMayoroIgualque0();
+                                                System.out.println("Introduce un correo: ");
+                                                correo = teclado.next();
+                                                execute = jdbc.realizarApuesta(conexion, cantidad, eleccion, correo, unodos, gol);
+                                                if(execute){
+                                                    System.out.println("Se ha relizar la apuesta correctamente");
+                                                } else {
+                                                    System.out.println("Ha habido un error");
+                                                }
+                                                break;
+
+                                            case '3':
+                                                unoxdos = utd.leerYValidarUnoXDos();
+                                                System.out.println("Introduce un correo: ");
+                                                correo = teclado.next();
+                                                execute = jdbc.realizarApuesta(conexion, cantidad, eleccion, correo, unoxdos);
+                                                if(execute){
+                                                    System.out.println("Se ha relizar la apuesta correctamente");
+                                                } else {
+                                                    System.out.println("Ha habido un error");
+                                                }
+                                                break;
                                         }
+
                                         break;
 
                                     case 2://ver partidos disponibles
@@ -128,10 +179,7 @@ public class PruebaMain {
 
                                         for(int i = 0; i< partidosDisponibles.size(); i++){
                                             System.out.println(partidosDisponibles.get(i).getId() + " �" + " -> " + partidosDisponibles.get(i).getCompeticion()
-                                                    + " -> " + partidosDisponibles.get(i).getGolLocal() + " -> " + partidosDisponibles.get(i).getGolVisitante()
-                                                    + " -> " + partidosDisponibles.get(i).getFechaInicio() + " -> " + partidosDisponibles.get(i).getFechaFin()
-                                                    + " -> " + partidosDisponibles.get(i).getEstaAbierto() + " -> " + partidosDisponibles.get(i).getLimiteAlcanzadoTipo1()
-                                                    + " -> " + partidosDisponibles.get(i).getLimiteAlcanzadoTipo2() + " -> " + partidosDisponibles.get(i).getLimiteAlcanzadoTipo3());
+                                                    + " -> " + partidosDisponibles.get(i).getEquipoLocal() + " -> " + partidosDisponibles.get(i).getEquipoVisitante());
 
                                         }
                                         break;
@@ -139,19 +187,39 @@ public class PruebaMain {
                                     case 3:
                                         //Menu Apuestas y que el usuario elija
                                         conexion = jdbc.crearConexion(usuario, contrasenha);
-                                        tipo = utd.leerYValidarTipo();
                                         eleccion = utd.mostrarApuestas(jdbc.obtenerApuestas(conexion));
+                                        tipo = utd.leerYValidarTipo();
                                         switch (tipo) {
-                                            case 1:
-                                                jdbc.apuestaCompleta(conexion, eleccion, tipo);
+                                            case '1':
+                                                apuestaTipo1 = (ApuestaTipo1) jdbc.apuestaCompleta(conexion, eleccion, tipo);
+                                                if(apuestaTipo1.getCorreoUsuario().equalsIgnoreCase("")) {
+                                                    System.out.println("Esta apuesta no es de el tipo correspondiente");
+                                                }
+                                                else {
+                                                    System.out.println(apuestaTipo1.toString());
+                                                }
+
+
                                             break;
 
-                                            case 2:
-                                                jdbc.apuestaCompleta(conexion, eleccion, tipo);
+                                            case '2':
+                                                apuestaTipo2 = (ApuestaTipo2) jdbc.apuestaCompleta(conexion, eleccion, tipo);
+                                                if(apuestaTipo2.getCorreoUsuario().equalsIgnoreCase("")) {
+                                                    System.out.println("Esta apuesta no es de el tipo correspondiente");
+                                                }
+                                                else {
+                                                    System.out.println(apuestaTipo2.toString());
+                                                }
                                                 break;
 
-                                            case 3:
-                                                jdbc.apuestaCompleta(conexion, eleccion, tipo);
+                                            case '3':
+                                                apuestaTipo3 = (ApuestaTipo3) jdbc.apuestaCompleta(conexion, eleccion, tipo);
+                                                if(apuestaTipo3.getCorreoUsuario().equalsIgnoreCase("")) {
+                                                    System.out.println("Esta apuesta no es de el tipo correspondiente");
+                                                }
+                                                else {
+                                                    System.out.println(apuestaTipo3.toString());
+                                                }
                                                 break;
 
                                         }
@@ -201,8 +269,11 @@ public class PruebaMain {
                                                 conexion = jdbc.crearConexion(usuario, contrasenha);
                                                 movimientos = jdbc.movimientosCuenta(conexion,correo);
 
-                                                System.out.println(movimientos.getCorreoUsuario() + " �" + " -> " + movimientos.getNumeroApuestasGanadas()
-                                                        + " -> " + movimientos.getNumeroApuestasRealizadas());
+                                                for(int i = 0; i < movimientos.size(); i++) {
+                                                    System.out.println(movimientos.get(i).getCorreoUsuario() + " �" + " -> " + movimientos.get(i).getNumeroApuestasGanadas()
+                                                            + " -> " + movimientos.get(i).getNumeroApuestasRealizadas());
+                                                }
+
                                             break;
                                         }
                                         opcionCuenta = utd.leerYValidarOpcionSubMenuCuenta();
@@ -264,7 +335,14 @@ public class PruebaMain {
                                 break;
 
                                 case 5:
-                                    System.out.println("Pagar las apuestas ganadas del partido");
+                                    //System.out.println("Pagar las apuestas ganadas del partido");
+                                    conexion = jdbc.crearConexion(usuario, contrasenha);
+                                    partidosFull = jdbc.partidos(conexion);
+                                    eleccion = utd.mostrarPartidos(partidosFull);
+                                    execute = jdbc.pagarApuestasGanadas(conexion, eleccion);
+                                    if(execute){
+                                        System.out.println("Se han pagado aquellas apuestas que se han ganado del partido seleccionado");
+                                    }
                                 break;
                             }
                             opcionSubMenu = utd.leerYValidarOpcionMenuAdministrador();

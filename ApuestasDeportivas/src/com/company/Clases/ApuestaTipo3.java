@@ -31,4 +31,11 @@ public class ApuestaTipo3 extends Apuesta {
     public void setUnoxDos(Character unoxDos) {
         this.unoxDos = unoxDos;
     }
+
+    @Override
+    public String toString() {
+        return "ApuestaTipo3{" +
+                "unoxDos=" + unoxDos +
+                "} " + super.toString();
+    }
 }
