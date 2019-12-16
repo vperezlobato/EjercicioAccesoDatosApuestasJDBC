@@ -22,8 +22,8 @@ public class JDBC {
      */
 
     public Connection crearConexion(String usuario,String contrasena){
-        //String sourceURL = "jdbc:sqlserver://localhost;DatabaseName=CasaDeApuestas";
-        String sourceURL = "jdbc:sqlserver://DESKTOP-VEDOCS8;DatabaseName=CasaDeApuestas";
+        String sourceURL = "jdbc:sqlserver://localhost;DatabaseName=CasaDeApuestas";
+        //String sourceURL = "jdbc:sqlserver://DESKTOP-VEDOCS8;DatabaseName=CasaDeApuestas";
         Connection conexion = null;
         try {
             conexion = DriverManager.getConnection(sourceURL, usuario, contrasena);
@@ -326,7 +326,7 @@ public class JDBC {
     Postcondiciones: Asociado al nombre, el boolean realizado si es true es que se ha realizado la apuesta y si es false no se ha realizado
  */
     public boolean realizarApuesta(Connection conexion, Double cantidad, UUID idPartido, String correo, Character localOVisitante, Integer goles) {
-        String query = "EXECUTE RealizarApuestaTipo2(?,?,?,?,?,?)";
+        String query = "{CALL RealizarApuestaTipo2(?,?,?,?,?,?)}";
         double cuota = 0.0;
         boolean resultado = false;
         int filas = 0;
@@ -373,7 +373,7 @@ public class JDBC {
     Postcondiciones: Asociado al nombre, el boolean realizado si es true es que se ha realizado la apuesta y si es false no se ha realizado
 */
     public boolean realizarApuesta(Connection conexion, Double cantidad, UUID idPartido, String correo, Character unoxdos) {
-        String query = "EXECUTE RealizarApuestaTipo3(?,?,?,?,?)";
+        String query = "{CALL RealizarApuestaTipo3(?,?,?,?,?)}";
         double cuota = 0.0;
         int filas = 0;
         boolean resultado = false;

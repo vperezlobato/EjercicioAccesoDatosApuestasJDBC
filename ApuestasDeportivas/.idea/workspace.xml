@@ -114,6 +114,8 @@
       <workItem from="1575966653092" duration="2935000" />
       <workItem from="1576153927671" duration="9000" />
       <workItem from="1576225612615" duration="7770000" />
+      <workItem from="1576481020632" duration="389000" />
+      <workItem from="1576486450178" duration="4820000" />
     </task>
     <servers />
   </component>
@@ -122,11 +124,16 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/src/com/company/Gestionadoras/JDBC.java</url>
-          <line>24</line>
+          <line>23</line>
           <properties class="com.company.Gestionadoras.JDBC" method="crearConexion">
             <option name="EMULATED" value="true" />
           </properties>
           <option name="timeStamp" value="12" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/com/company/Utilidades/Utilidades.java</url>
+          <line>243</line>
+          <option name="timeStamp" value="15" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
